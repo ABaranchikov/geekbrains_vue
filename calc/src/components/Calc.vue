@@ -25,6 +25,9 @@ export default {
   }),
   methods: {
     div() {
+      if (this.operand2 === 0) {
+        return (this.sum = "Error: division by 0!");
+      }
       this.sum = this.operand1 / this.operand2;
     },
     pow() {
