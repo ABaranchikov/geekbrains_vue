@@ -34,22 +34,10 @@
       <button class="keyboard-btn" @click="removeSymbol">&#8592;</button>
 
       <div class="selectField">
-        <input
-          name="selectedField"
-          type="radio"
-          id="one"
-          value="operand1"
-          v-model="selectedField"
-        />
+        <input type="radio" id="one" value="operand1" v-model="selectedField" />
         <label for="one">Операнд 1</label>
 
-        <input
-          name="selectedField"
-          type="radio"
-          id="two"
-          value="operand2"
-          v-model="selectedField"
-        />
+        <input type="radio" id="two" value="operand2" v-model="selectedField" />
         <label for="two">Операнд 2</label>
         <span> Выбрано: {{ selectedField }} </span>
       </div>
