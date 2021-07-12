@@ -4,9 +4,20 @@
       <h1>My personal cost</h1>
       <main>
         <div>
-          <AddPayment @addNewPayment="addData" />
+          <AddPayment @addNewPayment="addData" :categories="categories" />
         </div>
+
+        <CategorySelect
+          @addNewCategory="addCategory"
+          :categories="categories"
+        />
+
         <PaymentsDisplay :list="paymentsList" />
+        <Pagination
+          @changePage="changePage"
+          :pageCount="pageCount"
+          :activePage="activePage"
+        />
       </main>
     </header>
   </div>
@@ -15,81 +26,62 @@
 <script>
 import PaymentsDisplay from "./components/PaymentsDisplay.vue";
 import AddPayment from "./components/AddPayment.vue";
+import CategorySelect from "./components/CategorySelect.vue";
+
+import { mapGetters, mapMutations, mapActions } from "vuex";
+import Pagination from "./components/Pagination.vue";
 
 export default {
   name: "App",
   components: {
     PaymentsDisplay,
     AddPayment,
+    Pagination,
+    CategorySelect,
   },
-  data: () => ({
-    paymentsList: [],
-  }),
+
   methods: {
+    ...mapMutations(["setPaymentListData", "addDataToPaymentsList"]),
+    ...mapActions(["fetchData", "fetchCategory", "addCategoryToList"]),
     addData(data) {
       //this.paymentsList.push(data);
-      this.paymentsList = [...this.paymentsList, data];
+      // this.paymentsList = [...this.paymentsList, data];
+      this.addDataToPaymentsList(data);
     },
-
-    fetchData() {
-      return [
-        {
-          data: "28.03.2021",
-          category: "Food",
-          value: 169,
-        },
-        {
-          data: "21.03.2021",
-          category: "Sport",
-          value: 400,
-        },
-        {
-          data: "30.03.2021",
-          category: "Internet",
-          value: 500,
-        },
-
-        {
-          data: "01.04.2021",
-          category: "Food",
-          value: 1800,
-        },
-        {
-          data: "02.04.2021",
-          category: "Petrol",
-          value: 2500,
-        },
-        {
-          data: "03.04.2021",
-          category: "Housing",
-          value: 1500,
-        },
-        {
-          data: "04.04.2021",
-          category: "Clothing",
-          value: 10000,
-        },
-        {
-          data: "05.04.2021",
-          category: "Food",
-          value: 3860,
-        },
-        {
-          data: "06.04.2021",
-          category: "Housing",
-          value: 800,
-        },
-        {
-          data: "07.04.2021",
-          category: "Food",
-          value: 1800,
-        },
-      ];
+    addCategory(data) {
+      console.log("addCategory = " + data);
+      this.addCategoryToList(data);
     },
+    changePage(page) {
+      console.log("Page = " + page);
+      this.fetchData(page);
+    },
+  },
+
+  computed: {
+    ...mapGetters({
+      paymentsList: "getPaymentList",
+      categories: "getCategoryList",
+      pageCount: "getPageCount",
+      activePage: "getActivePage",
+    }),
+    getFPV() {
+      return this.$store.getters.getFullPaymentValue;
+    },
+    //paymentsList() {
+    // return this.$store.getters.getPaymentList;
+    // },
   },
 
   created() {
-    this.paymentsList = this.fetchData();
+    //this.paymentsList = this.fetchData();
+    //this.$store.commit("setPaymentListData", this.fetchData()); //mutation
+    //  this.setPaymentListData(this.fetchData());
+    // this.$store.dispatch("fetchData"); //action
+    this.fetchData("page1");
+    if (!this.categories.length) {
+      this.fetchCategory();
+    }
   },
 };
 </script>

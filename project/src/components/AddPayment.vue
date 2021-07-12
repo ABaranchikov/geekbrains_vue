@@ -3,7 +3,13 @@
     <button class="addCost" @click="show = !show">add new cost +</button>
     <div v-show="show" class="addData">
       <input class="inputData" v-model="date" placeholder="date" />
-      <input class="inputData" v-model="category" placeholder="category" />
+      <select class="inputData" v-model="selected">
+        <option value="" disabled selected>Choose category...</option>
+        <option v-for="(option, idx) in categories" :key="idx">
+          {{ option }}
+        </option>
+      </select>
+
       <input
         class="inputData"
         v-model.number="value"
@@ -18,11 +24,18 @@
 <script>
 export default {
   name: "AddPayment",
+  props: {
+    categories: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data: () => ({
     date: "",
     category: "",
     value: null,
     show: false,
+    selected: "",
   }),
   methods: {
     onClick() {

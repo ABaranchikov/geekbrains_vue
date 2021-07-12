@@ -9,7 +9,7 @@
       </tr>
 
       <tr v-for="(item, idx) in list" :key="idx">
-        <td>{{ idx + 1 }}</td>
+        <td>{{ item.id }}</td>
         <td>{{ item.data }}</td>
         <td>{{ item.category }}</td>
         <td>{{ item.value }}</td>
