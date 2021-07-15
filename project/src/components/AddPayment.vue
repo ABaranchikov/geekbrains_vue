@@ -1,11 +1,10 @@
 <template>
   <div>
-    <button class="addCost" @click="show = !show">add new cost +</button>
-    <div v-show="show" class="addData">
+    <div class="addData">
       <input class="inputData" v-model="date" placeholder="date" />
       <select class="inputData" v-model="selected">
         <option value="" disabled selected>Choose category...</option>
-        <option v-for="(option, idx) in categories" :key="idx">
+        <option v-for="(option, idx) in getCategories" :key="idx">
           {{ option }}
         </option>
       </select>
@@ -24,26 +23,32 @@
 <script>
 export default {
   name: "AddPayment",
-  props: {
-    categories: {
-      type: Array,
-      default: () => [],
-    },
-  },
+  props: {},
   data: () => ({
     date: "",
     category: "",
     value: null,
-    show: false,
     selected: "",
   }),
   methods: {
+    fetchData() {
+      const category = this.$route.params.category;
+      if (category != undefined) {
+        this.selected = category;
+      } else {
+        this.selected = "";
+      }
+      this.date = this.getCurrentDate;
+      const urlSearchParams = new URLSearchParams(window.location.search);
+      const params = Object.fromEntries(urlSearchParams.entries());
+      this.value = params["value"];
+    },
+
     onClick() {
-      const { category, value } = this;
       const data = {
-        date: this.data || this.getCurrentDate,
-        category,
-        value,
+        data: this.data || this.getCurrentDate,
+        category: this.selected,
+        value: this.value,
       };
       console.log("add", data);
       this.$emit("addNewPayment", data, "true");
@@ -52,11 +57,29 @@ export default {
   computed: {
     getCurrentDate() {
       const today = new Date();
-      const d = today.getDate();
-      const m = today.getMonth() + 1;
+      let d = today.getDate();
+      if (d < 10) {
+        d = "0" + d;
+      }
+      let m = today.getMonth() + 1;
+      if (m < 10) {
+        m = "0" + m;
+      }
       const y = today.getFullYear();
       return `${d}.${m}.${y}`;
     },
+    getCategories() {
+      return this.$store.getters.getCategoryList;
+    },
+  },
+  created() {
+    // загружаем данные, когда представление создано
+    // и данные реактивно отслеживаются
+    this.fetchData();
+  },
+  watch: {
+    // при изменениях маршрута запрашиваем данные снова
+    $route: "fetchData",
   },
 };
 </script>

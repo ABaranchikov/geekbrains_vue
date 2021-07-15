@@ -18,7 +18,11 @@ export default new Vuex.Store({
             state.paymantsList = payload;
         },
         addDataToPaymentsList(state, payload) {
-            state.paymantsList.push(payload);
+            payload.id = state.id + 1;
+            console.log(payload);
+            state.paymantsList[state.page].push(payload);
+            Vue.set(state, "paymantsList", state.paymantsList);
+            Vue.set(state, "id", payload.id);
         },
         updatePaymentList(state, payload) {
             console.log(payload);
@@ -86,18 +90,6 @@ export default new Vuex.Store({
                 commit('setCategoryList', res)
             })
         },
-
-        addCategoryToList({ commit }, newCategory) {
-            return new Promise((resolve) => {
-                console.log("action add category =" + newCategory);
-                setTimeout(() => {
-                    resolve(newCategory);
-                }, 500)
-            }).then(res => {
-                commit('updateCategory', res)
-            })
-        },
-
     },
 
     getters: {

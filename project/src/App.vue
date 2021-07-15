@@ -2,29 +2,29 @@
   <div id="app" :class="[$style.wrapper]">
     <header>
       <h1>My personal cost</h1>
-      <div class="menu">
-        <router-link to="/dashboard">Dashboard</router-link> /
-        <router-link to="/about">About</router-link>/
-        <!--
-        <router-link to="/notfound">NotFound</router-link>
--->
-        <button @click="goToPageNotFound">Not found</button>
-        <!--
-        <a href="dashboard">Dashboard</a> / <a href="about">About</a> /
-        <a href="notfound">Not Found</a>
-        -->
+
+      <div>
+        <ul :class="[$style.menu]">
+          <li :class="[$style.menu_item]">
+            <router-link to="/add/payment/Food?value=100">Food</router-link>
+          </li>
+          <li :class="[$style.menu_item]">
+            <router-link to="/add/payment/Sport?value=200">Sport</router-link>
+          </li>
+          <li :class="[$style.menu_item]">
+            <router-link to="/add/payment/Education?value=500"
+              >Education</router-link
+            >
+          </li>
+          <li :class="[$style.menu_item]">
+            <router-link to="/add/payment/">Other</router-link>
+          </li>
+        </ul>
       </div>
+
       <main>
         <div class="content-page">
-          <router-view />
-          <!--
-          <About v-if="page === 'about'" />
-          <Dashboard v-if="page === 'dashboard'" />
-          <NotFound v-if="page === 'notfound'" />
-          -->
-        </div>
-        <div>
-          <AddPayment @addNewPayment="addData" :categories="categories" />
+          <router-view @addNewPayment="addData" />
         </div>
 
         <CategorySelect
@@ -45,21 +45,16 @@
 
 <script>
 import PaymentsDisplay from "./components/PaymentsDisplay.vue";
-import AddPayment from "./components/AddPayment.vue";
 import CategorySelect from "./components/CategorySelect.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Pagination from "./components/Pagination.vue";
-/*
-import About from "./views/About.vue";
-import NotFound from "./views/NotFound.vue";
-import Dashboard from "./views/Dashboard.vue";
-*/
+
 export default {
   name: "App",
   components: {
     PaymentsDisplay,
-    AddPayment,
+    // AddPayment,
     Pagination,
     CategorySelect,
     //  About,
@@ -72,33 +67,24 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(["setPaymentListData", "addDataToPaymentsList"]),
-    ...mapActions(["fetchData", "fetchCategory", "addCategoryToList"]),
+    ...mapMutations([
+      "setPaymentListData",
+      "addDataToPaymentsList",
+      "updateCategory",
+    ]),
+    ...mapActions(["fetchData", "fetchCategory"]),
     addData(data) {
-      //this.paymentsList.push(data);
-      // this.paymentsList = [...this.paymentsList, data];
+      console.log("addData");
+      //this.addDataToPayments(data);
       this.addDataToPaymentsList(data);
     },
     addCategory(data) {
       console.log("addCategory = " + data);
-      this.addCategoryToList(data);
+      this.updateCategory(data);
     },
     changePage(page) {
       console.log("Page = " + page);
       this.fetchData(page);
-    },
-    /*
-    setMenuPage() {
-      //навигация через hash
-      //this.page = location.hash.slice(1);
-      this.page = location.pathname.slice(1);
-    },
-    
-    */
-    goToPageNotFound() {
-      this.$router.push({
-        name: "NotFound",
-      });
     },
   },
 
@@ -109,12 +95,6 @@ export default {
       pageCount: "getPageCount",
       activePage: "getActivePage",
     }),
-    getFPV() {
-      return this.$store.getters.getFullPaymentValue;
-    },
-    //paymentsList() {
-    // return this.$store.getters.getPaymentList;
-    // },
   },
 
   created() {
@@ -165,5 +145,23 @@ export default {
 
 .wrapper {
   background: #fff;
+}
+
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  margin-top: 30px;
+
+  display: flex; /*Размещаем список горизонтально для реализации меню*/
+}
+
+.menu_item a {
+  font-size: 26px;
+  color: #008b8b;
+  text-decoration: none; /*убираем подчеркивание текста ссылок*/
+}
+.menu_item {
+  margin-right: 10px; /*Добавляем отступ у пунктов меню*/
 }
 </style>
