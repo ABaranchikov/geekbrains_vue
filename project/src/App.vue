@@ -38,6 +38,11 @@
           :pageCount="pageCount"
           :activePage="activePage"
         />
+        <transition name="fade">
+          <modal-window v-if="modalSettings.name" :settings="modalSettings" />
+        </transition>
+
+        <button @click="showPaymentForm">Open/Hide</button>
       </main>
     </header>
   </div>
@@ -49,6 +54,7 @@ import CategorySelect from "./components/CategorySelect.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Pagination from "./components/Pagination.vue";
+//import ModalWindow from "./components/ModalWindow.vue";
 
 export default {
   name: "App",
@@ -57,13 +63,17 @@ export default {
     // AddPayment,
     Pagination,
     CategorySelect,
-    //  About,
-    //  NotFound,
-    // Dashboard,
+
+    ModalWindow: () =>
+      import(
+        /*webpackChunkName; 'ModalWindow'*/ "./components/ModalWindow.vue"
+      ),
   },
   data() {
     return {
       page: "",
+      modalShow: false,
+      modalSettings: {},
     };
   },
   methods: {
@@ -85,6 +95,19 @@ export default {
     changePage(page) {
       console.log("Page = " + page);
       this.fetchData(page);
+    },
+
+    //modal
+    onShow(settings) {
+      this.modalSettings = settings;
+      console.log(settings);
+    },
+    onHide() {
+      this.modalSettings = {};
+    },
+
+    showPaymentForm() {
+      this.$modal.show("AddPayment", { header: "ADD" });
     },
   },
 
@@ -109,6 +132,8 @@ export default {
   },
 
   mounted() {
+    this.$modal.EventBus.$on("shown", this.onShow);
+    this.$modal.EventBus.$on("hide", this.onHide);
     /*
     //навигация через hash
     this.setMenuPage();
@@ -130,10 +155,20 @@ export default {
     window.addEventListener("popstate", this.setMenuPage);
     */
   },
+  beforeDestroy() {
+    this.$modal.EventBus.$off("shown", this.onShow);
+    this.$modal.EventBus.$off("hide", this.onHide);
+  },
 };
 </script>
 
 <style lang="scss" module>
+html,
+body,
+.app {
+  width: 100%;
+  height: 100vh;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -163,5 +198,16 @@ export default {
 }
 .menu_item {
   margin-right: 10px; /*Добавляем отступ у пунктов меню*/
+}
+</style>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
