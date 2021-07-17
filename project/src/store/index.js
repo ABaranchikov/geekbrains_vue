@@ -52,6 +52,23 @@ export default new Vuex.Store({
         updateCategory(state, payload) {
             console.log("mutation update category = " + payload);
             Vue.set(state.categoryList, state.categoryList.length, payload);
+        },
+
+        updateData(state, payload) {
+            state.paymantsList[state.page] = state.paymantsList[state.page].map(item => {
+                return item.id === payload.id
+                    ? payload
+                    : item
+            });
+            state.paymantsList[state.page] = [...state.paymantsList[state.page]]
+            // Vue.set(state, "paymantsList", state.paymantsList);
+        },
+
+        deleteDataFromList(state, payload) {
+            const data = state.paymantsList[state.page].filter(item => item.id != payload);
+            state.paymantsList[state.page] = data;
+            Vue.set(state.paymantsList, state.page, data);
+            // Vue.set(state, "paymantsList", state.paymantsList);
         }
     },
 
@@ -103,6 +120,9 @@ export default new Vuex.Store({
         getActivePage: state => {
             let page = state.page;
             return +page.slice(4);
+        },
+        getDataById: state => id => {
+            return state.paymantsList[state.page].filter(item => item.id === id)
         }
     }
 })

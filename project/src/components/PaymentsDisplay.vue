@@ -6,21 +6,48 @@
         <th>Date</th>
         <th>Category</th>
         <th>Value</th>
+        <th></th>
       </tr>
 
-      <tr v-for="(item, idx) in list" :key="idx">
+      <tr v-for="(item, idx) in getPaymentList" :key="idx">
         <td>{{ item.id }}</td>
         <td>{{ item.data }}</td>
         <td>{{ item.category }}</td>
         <td>{{ item.value }}</td>
+        <td class="table_menu">
+          <button
+            class="popup_menu_button"
+            @click.prevent="clickHandle(item.id)"
+          >
+            <svg
+              width="24px"
+              height="24px"
+              viewBox="0 0 16 16"
+              class="bi bi-three-dots-vertical"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"
+              />
+            </svg>
+          </button>
+        </td>
       </tr>
     </table>
+    <transition name="fade">
+      <modal-popup-menu v-if="modalSettings.show" :settings="modalSettings" />
+    </transition>
   </div>
 </template>
 
 <script>
+import ModalPopupMenu from "./ModalPopupMenu.vue";
 export default {
   name: "PlaymentsDisplay",
+  components: {
+    ModalPopupMenu,
+  },
   props: {
     list: {
       type: Array,
@@ -28,7 +55,39 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      modalSettings: {
+        show: false,
+      },
+    };
+  },
+  methods: {
+    clickHandle(id) {
+      console.log(id);
+      this.$modal.show("", { id: id, show: !this.modalSettings.show });
+    },
+    onShow(settings) {
+      this.modalSettings = settings;
+
+      console.log(settings);
+    },
+    onHide() {
+      this.modalSettings = {};
+    },
+  },
+  computed: {
+    getPaymentList() {
+      return this.$store.getters.getPaymentList;
+    },
+  },
+
+  created() {
+    this.$store.dispatch("fetchData", "page1");
+  },
+
+  mounted() {
+    this.$modal.EventBus.$on("shown", this.onShow);
+    this.$modal.EventBus.$on("hide", this.onHide);
   },
 };
 </script>
@@ -49,5 +108,35 @@ export default {
 .table td {
   border-bottom: 1px solid #dddddd;
   padding: 15px 5px;
+}
+
+.popup_menu_button {
+  border: none;
+  fill: #000;
+  background-color: transparent;
+}
+.popup_menu_button:hover {
+  transform: scale(1.5);
+  fill: #000;
+}
+
+.popup_menu_button:active {
+  fill: #fff;
+}
+.popup_menu_button:focus {
+  fill: #000;
+  outline: none;
+}
+
+.table_menu {
+  width: 50px;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -15,7 +15,7 @@
         type="number"
         placeholder="value"
       />
-      <button class="addDataButton" @click="onClick">Add +</button>
+      <button class="addDataButton" @click="onClick">Add</button>
     </div>
   </div>
 </template>
@@ -23,7 +23,7 @@
 <script>
 export default {
   name: "AddPayment",
-  props: {},
+
   data: () => ({
     date: "",
     category: "",
@@ -96,7 +96,6 @@ export default {
 .addData {
   display: flex;
   flex-direction: column;
-  width: 25%;
 }
 .inputData {
   text-transform: capitalize;

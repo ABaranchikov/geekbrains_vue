@@ -19,6 +19,9 @@
           <li :class="[$style.menu_item]">
             <router-link to="/add/payment/">Other</router-link>
           </li>
+          <li :class="[$style.menu_item]">
+            <a href="#" @click="addCategoryClick">Category</a>
+          </li>
         </ul>
       </div>
 
@@ -26,13 +29,8 @@
         <div class="content-page">
           <router-view @addNewPayment="addData" />
         </div>
+        <PaymentsDisplay />
 
-        <CategorySelect
-          @addNewCategory="addCategory"
-          :categories="categories"
-        />
-
-        <PaymentsDisplay :list="paymentsList" />
         <Pagination
           @changePage="changePage"
           :pageCount="pageCount"
@@ -41,8 +39,6 @@
         <transition name="fade">
           <modal-window v-if="modalSettings.name" :settings="modalSettings" />
         </transition>
-
-        <button @click="showPaymentForm">Open/Hide</button>
       </main>
     </header>
   </div>
@@ -50,20 +46,15 @@
 
 <script>
 import PaymentsDisplay from "./components/PaymentsDisplay.vue";
-import CategorySelect from "./components/CategorySelect.vue";
 
 import { mapGetters, mapMutations, mapActions } from "vuex";
 import Pagination from "./components/Pagination.vue";
-//import ModalWindow from "./components/ModalWindow.vue";
 
 export default {
   name: "App",
   components: {
     PaymentsDisplay,
-    // AddPayment,
     Pagination,
-    CategorySelect,
-
     ModalWindow: () =>
       import(
         /*webpackChunkName; 'ModalWindow'*/ "./components/ModalWindow.vue"
@@ -72,7 +63,7 @@ export default {
   data() {
     return {
       page: "",
-      modalShow: false,
+
       modalSettings: {},
     };
   },
@@ -81,17 +72,14 @@ export default {
       "setPaymentListData",
       "addDataToPaymentsList",
       "updateCategory",
+      "deleteDataFromList",
     ]),
     ...mapActions(["fetchData", "fetchCategory"]),
     addData(data) {
       console.log("addData");
-      //this.addDataToPayments(data);
       this.addDataToPaymentsList(data);
     },
-    addCategory(data) {
-      console.log("addCategory = " + data);
-      this.updateCategory(data);
-    },
+
     changePage(page) {
       console.log("Page = " + page);
       this.fetchData(page);
@@ -106,14 +94,13 @@ export default {
       this.modalSettings = {};
     },
 
-    showPaymentForm() {
-      this.$modal.show("AddPayment", { header: "ADD" });
+    addCategoryClick() {
+      this.$modal.show("CategorySelect", { header: "Add new category" });
     },
   },
 
   computed: {
     ...mapGetters({
-      paymentsList: "getPaymentList",
       categories: "getCategoryList",
       pageCount: "getPageCount",
       activePage: "getActivePage",
@@ -125,7 +112,7 @@ export default {
     //this.$store.commit("setPaymentListData", this.fetchData()); //mutation
     //  this.setPaymentListData(this.fetchData());
     // this.$store.dispatch("fetchData"); //action
-    this.fetchData("page1");
+    // this.fetchData("page1");
     if (!this.categories.length) {
       this.fetchCategory();
     }

@@ -5,11 +5,11 @@
       v-model="newCategory"
       placeholder="add new category"
     />
-    <button class="addDataButton" @click="onClick">Add category</button>
+    <button class="addDataButton" @click="onClick">Add</button>
     <div>
       <select class="inputData" v-model="selected">
         <option value="" disabled selected>Category...</option>
-        <option v-for="(option, idx) in categories" :key="idx">
+        <option v-for="(option, idx) in getCategories" :key="idx">
           {{ option }}
         </option>
       </select>
@@ -38,6 +38,11 @@ export default {
       this.$emit("addNewCategory", data, "true");
     },
   },
+  computed: {
+    getCategories() {
+      return this.$store.getters.getCategoryList;
+    },
+  },
 };
 </script>
 
@@ -54,7 +59,7 @@ export default {
   width: 200px;
 }
 .addDataButton {
-  width: 200px;
+  width: 100px;
   background: #008b8b;
   color: #fff;
   text-transform: uppercase;
