@@ -1,8 +1,18 @@
 <template>
   <div>
     <div>
-      <input type="number" placeholder="op1" v-model.number="operand1" />
-      <input type="number" placeholder="op2" v-model.number="operand2" />
+      <input
+        type="number"
+        name="operand1"
+        placeholder="op1"
+        v-model.number="operand1"
+      />
+      <input
+        type="number"
+        name="operand2"
+        placeholder="op2"
+        v-model.number="operand2"
+      />
       = {{ result }}
     </div>
 
@@ -13,6 +23,7 @@
       class="keyboard-btn"
       v-for="btn in buttons"
       :key="btn"
+      :name="btn"
       @click="calculate(btn)"
     >
       {{ btn }}
@@ -22,22 +33,35 @@
       <label for="checkbox">Отобразить экранную клавиатуру</label>
     </div>
 
-    <div class="keyboard" v-if="checked">
+ <div class="keyboard" v-if="checked">  
       <button
         class="keyboard-btn"
         v-for="btn in collections"
-        :key="btn"
-        @click="addSymbol(btn)"
+        :key="btn.id"
+        :name= btn.name
+        @click="addSymbol(btn.id)"
       >
-        {{ btn }}
+        {{ btn.id }}
       </button>
-      <button class="keyboard-btn" @click="removeSymbol">&#8592;</button>
+      <button class="keyboard-btn" id="removeBtn" @click="removeSymbol">&#8592;</button>
 
       <div class="selectField">
-        <input type="radio" id="one" value="operand1" v-model="selectedField" />
+        <input
+          type="radio"
+          id="one"
+          name="radioBtn1"
+          value="operand1"
+          v-model="selectedField"
+        />
         <label for="one">Операнд 1</label>
 
-        <input type="radio" id="two" value="operand2" v-model="selectedField" />
+        <input
+          type="radio"
+          id="two"
+          name="radioBtn2"
+          value="operand2"
+          v-model="selectedField"
+        />
         <label for="two">Операнд 2</label>
         <span> Выбрано: {{ selectedField }} </span>
       </div>
@@ -57,7 +81,18 @@ export default {
     error: "",
     selectedField: "operand1",
     buttons: ["+", "-", "*", "/", "^"],
-    collections: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    collections: [
+      { id: "0", name: "btn0" },
+      { id: "1", name: "btn1" },
+      { id: "2", name: "btn2" },
+      { id: "3", name: "btn3" },
+      { id: "4", name: "btn4" },
+      { id: "5", name: "btn5" },
+      { id: "6", name: "btn6" },
+      { id: "7", name: "btn7" },
+      { id: "8", name: "btn8" },
+      { id: "9", name: "btn9" }
+    ],
     checked: false,
     logs: {},
   }),
