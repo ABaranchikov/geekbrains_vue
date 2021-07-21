@@ -73,6 +73,9 @@ export default new Vuex.Store({
     },
 
     actions: {
+        addData({ commit }, payload) {
+            console.log(commit, payload)
+        },
         fetchData({ commit, state }, page) {
             return new Promise((resolve) => {
                 setTimeout(() => {
