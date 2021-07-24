@@ -1,28 +1,26 @@
 <template>
-  <div>
-    <div class="addData">
-      <input class="inputData" v-model="date" placeholder="date" />
-      <select class="inputData" v-model="selected">
-        <option value="" disabled selected>Choose category...</option>
-        <option v-for="(option, idx) in getCategories" :key="idx">
-          {{ option }}
-        </option>
-      </select>
-
-      <input
-        class="inputData"
-        v-model.number="value"
-        type="number"
-        placeholder="value"
-      />
-      <button class="addDataButton" @click="onClick">Add</button>
-    </div>
-  </div>
+  <v-form>
+    <v-text-field v-model="date" label="Date" required></v-text-field>
+    <v-select
+      v-model="selected"
+      :items="getCategories"
+      label="Choose category..."
+      required
+    ></v-select>
+    <v-text-field v-model="value" label="Value" required></v-text-field>
+    <v-btn color="teal" dark @click="onClick"
+      >Add<v-icon>mdi-plus</v-icon></v-btn
+    >
+    <v-btn class="mr-4" color="teal" dark @click="onClose" v-if="dialog">Cancel</v-btn>
+  </v-form>
 </template>
 
 <script>
 export default {
   name: "AddPayment",
+   props: {
+    dialog: Boolean,
+  },
 
   data: () => ({
     date: "",
@@ -53,6 +51,11 @@ export default {
       console.log("add", data);
       this.$emit("addNewPayment", data, "true");
     },
+    onClose() {
+      const data = false;
+      this.$emit("closeAddPayment", data, "true");
+    }
+
   },
   computed: {
     getCurrentDate() {
@@ -83,33 +86,3 @@ export default {
   },
 };
 </script>
-
-<style  lang="scss" scoped>
-.addCost {
-  width: 150px;
-  background: #008b8b;
-  color: #fff;
-  text-transform: uppercase;
-  padding: 10px;
-  margin: 10px 0;
-}
-.addData {
-  display: flex;
-  flex-direction: column;
-}
-.inputData {
-  text-transform: capitalize;
-  padding: 15px 5px;
-  margin: 5px 0;
-  border: 1px solid #dddddd;
-}
-.addDataButton {
-  width: 150px;
-  background: #008b8b;
-  color: #fff;
-  text-transform: uppercase;
-  padding: 10px;
-  align-self: flex-end;
-  margin: 10px 0;
-}
-</style>
